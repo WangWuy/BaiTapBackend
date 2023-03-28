@@ -15,6 +15,20 @@ from rest_framework.views import Response
 from .perms import CommentOwner
 import math
 from drf_yasg.utils import swagger_auto_schema
+from oauth2_provider.views.generic import ProtectedResourceView
+from django.http import HttpResponse
+
+# Custom generic response oauth2
+class ApiEndpoint(ProtectedResourceView):
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({"status": "success", "note": serializer.data}, status=status.HTTP_200_OK)
+        else:
+            return Response({"status": "fail", "message": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+    
+
 
 class CategoryViewSet(viewsets.ViewSet, generics.ListAPIView):
     queryset = Category.objects.all()
@@ -98,23 +112,7 @@ class LessonViewSet(viewsets.ViewSet, generics.RetrieveAPIView):
         return Response(status=status.HTTP_200_OK)
 
 
-# class UserViewSet(viewsets.ViewSet,
-#                     generics.CreateAPIView,
-#                     generics.UpdateAPIView):
-#     queryset = User.objects.filter(is_active=True)
-#     serializer_class = UserSerializer
-#     parser_classes = [parsers.MultiPartParser, ]
-
-#     # def get_permissions(self):
-#     #     if self.action in ['current_user', 'update', 'partial_update']:
-#     #         return [permissions.IsAuthenticated()]
-
-#     #     return [permissions.AllowAny()]
-
-#     @action(methods=['get'], detail=False, url_path='current-user')
-#     def current_user(self, request):
-#         return Response(UserSerializer(request.user).data)
-class UserViewSet(viewsets.ViewSet,
+class UserViewSet(viewsets.ModelViewSet,
                   generics.ListAPIView,
                   generics.CreateAPIView,
                   generics.RetrieveAPIView):
@@ -122,17 +120,31 @@ class UserViewSet(viewsets.ViewSet,
     serializer_class = UserSerializer
     parser_classes = [parsers.MultiPartParser, ]
     # permission_classes = [permissions.IsAuthenticated]
-
+    
     # Set quyen xem thong tin user:
     def get_permissions(self):
         if self.action == 'current_user':
             return [permissions.IsAuthenticated()]
          
         return [permissions.AllowAny()]
+    @action(methods=['get'], detail=False, url_path='current-user')
+    def current_user(self, request):
+        return Response(self.serializer_class(request.user).data)
     
-    # @action(method=['get'], detail=False, url_path='current-user')
-    # def current_user(self, request):
-    #     return Response(self.serializer_class(request.user).data)
+    # api thay doi trang thai
+    @action(methods=['post'], detail=True, url_path="change-status", url_name="change-status")
+    
+    def hide_falcuty(self, request, pk):
+        try:
+            u = User.objects.get(pk=pk)
+            u.status = False
+            u.save()
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response(data=UserSerializer(u, context={'request': request}).data,
+                        status=status.HTTP_200_OK)
+   
     
 
 class CommentViewSet(viewsets.ViewSet, generics.DestroyAPIView, generics.UpdateAPIView):

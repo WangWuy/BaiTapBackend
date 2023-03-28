@@ -5,7 +5,8 @@ from ckeditor.fields import RichTextField
 
 class User(AbstractUser):
     avatar = models.ImageField(upload_to='users/%Y/%m/', null=True)
-
+    phone = models.IntegerField(null=True)
+    address = models.TextField(null=True)
 
 class BaseModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)

@@ -24,7 +24,47 @@ SECRET_KEY = 'django-insecure-5redc-pe%j33)lsc2pq7=+wvey30uagbhf(1o^vw#u8cd7s-_n
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ed48-14-161-49-145.ap.ngrok.io']
+
+CORS_ALLOWED_ORIGINS = [
+"https://domain.com",
+"https://api.domain.com",
+"http://localhost:8080",
+"http://127.0.0.1:8000",
+"https://ed48-14-161-49-145.ap.ngrok.io"
+]
+
+ALLOWED_HOSTS = ['*']
+
+CORS_ALLOWED_ORIGIN_REGEXES = [
+r"^https://\w+\.domain\.com$",
+]
+
+CORS_ALLOW_METHODS = [
+'DELETE',
+'GET',
+'OPTIONS',
+'PATCH',
+'POST',
+'PUT',
+]
+
+CORS_ALLOW_HEADERS = [
+'accept',
+'accept-encoding',
+'authorization',
+'content-type',
+'dnt',
+'origin',
+'user-agent',
+'x-csrftoken',
+'x-requested-with',
+]
+
+CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_WHITELIST = (
+#   'http://localhost:8000',
+# )
 
 # Application definition
 
@@ -40,8 +80,10 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'rest_framework',
     'drf_yasg',
-    'oauth2_provider'
+    'oauth2_provider',
+    'corsheaders',
 ]
+APPEND_SLASH=False
 
 CKEDITOR_UPLOAD_PATH = "ckeditors/courses/"
 
@@ -54,6 +96,7 @@ REST_FRAMEWORK = {
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -100,7 +143,7 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'courses.User'
 
-MEDIA_ROOT = '%s/courses/static/' % BASE_DIR
+MEDIA_ROOT = '%s/courses/' % BASE_DIR
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
