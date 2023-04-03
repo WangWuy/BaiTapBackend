@@ -2,9 +2,8 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from ckeditor.fields import RichTextField
 
-
 class User(AbstractUser):
-    avatar = models.ImageField(upload_to='users/%Y/%m/', null=True)
+    avatar = models.ImageField(upload_to='users/%Y/%m/', null=True, default=[])
     phone = models.IntegerField(null=True)
     address = models.TextField(null=True)
 
@@ -28,7 +27,7 @@ class Course(BaseModel):
     subject = models.CharField(max_length=255)
     description = RichTextField()
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
-    image = models.ImageField(upload_to='courses/%Y/%m/', null=True, blank=True)
+    image = models.ImageField(upload_to='static/courses/%Y/%m/', null=True, blank=True)
 
     def __str__(self):
         return self.subject
@@ -139,9 +138,9 @@ class Questions(models.Model):
 
 class Falcuty(models.Model):
     falcuty_name = models.CharField(max_length=50, null=False)
-    falcuty_gpa = models.FloatField(null=False)
-    discription = models.TextField(null=True)
-    website_url = models.TextField(null=True)
+    falcuty_gpa = RichTextField()
+    discription = RichTextField()
+    introduction = RichTextField()
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -176,7 +175,7 @@ class University_info(models.Model):
     
 class Slider(models.Model):
     title = models.TextField()
-    banner_url = models.ImageField(upload_to='avt/%Y/%m', default=None, null=True)
+    image = models.ImageField(upload_to='avt/%Y/%m', default=None, null=True)
     discription = models.TextField(null=False)
     status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

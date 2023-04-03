@@ -2,8 +2,15 @@ from .models import Category, Course, Lesson, Tag, User, Comment, University_inf
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
+class ImageSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField(source='image')
 
-class CategorySerializer(serializers.ModelSerializer):
+    def get_image(self, course):
+        if course.image:
+            request = self.context.get('request')
+            return request.build_absolute_uri('/static/%s' % course.image.name) if request else ''
+
+class CategorySerializer(ImageSerializer):
     class Meta:
         model = Category
         fields = ['id', 'name']
@@ -42,6 +49,12 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'password': {'write_only': True}
         }
+
+    def get_image(self, user):
+        if user.avatar:
+            request = self.context.get('request')
+            return request.build_absolute_uri('/static/%s' % user.avatar.name) if request else ''
+    
     def create(self, validated_data):
             data = validated_data.copy()
             u = User(**data)
@@ -96,6 +109,12 @@ class MajorSerializer(ModelSerializer):
         fields = ["id", "major_name", "discription", "falcuty_id", "status", "created_at"]
                 
 class SliderSerializer(ModelSerializer):
+    image = serializers.SerializerMethodField(source='image')
+
+    def get_image(self, slider):
+        if slider.image:
+            request = self.context.get('request')
+            return request.build_absolute_uri('/static/%s' % slider.image.name) if request else ''
     class Meta:
         model = Slider
-        fields = ["id", "title", "banner_url", "discription", "status", "created_at"]
+        fields = ["id", "title", "image", "discription", "status", "created_at"]

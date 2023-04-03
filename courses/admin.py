@@ -5,23 +5,24 @@ from ckeditor_uploader.widgets import CKEditorUploadingWidget
 from django.utils.html import mark_safe
 from django.urls import path
 from django.contrib.auth.models import Permission
+from django.template.response import TemplateResponse;
 
 # Custom lại trang admin 
 class StdAppAdminSite(admin.AdminSite):
     site_title = 'Quản lý'
     site_header = 'HỆ THỐNG QUẢN LÝ TUYỂN SINH'
     index_title = 'Trang quản trị'
-    # def get_urls(self):
-    #     return [
-    #         path('std-stats/', self.std_stats)
-    #     ]  + super().get_urls()
+    def get_urls(self):
+        return [
+            path('std-stats/', self.std_stats)
+        ]  + super().get_urls()
     
-    # def std_stats(self, request):
-    #     user_count = User.objects.count()
+    def std_stats(self, request):
+        user_count = User.objects.count()
 
-        # return TemplateResponse(request, 'admin/std-stats.html', {
-        #     'user_count': user_count
-        # })
+        return TemplateResponse(request, 'admin/std-stats.html', {
+            'user_count': user_count
+        })
 
 admin_site = StdAppAdminSite('mystd')
 
@@ -30,7 +31,7 @@ class UsersAmin(admin.ModelAdmin):
     list_display_links = ["username"]   # Các trường có gắn link dẫn đến trang detail
     search_fields = ["username", "first_name", "last_name"]
     list_filter = ["username", "first_name", "last_name"]
-    readonly_fields = ["avatar"] # Chỉ cho phép đọc
+    # readonly_fields = ["avatar"] # Chỉ cho phép đọc
 
     def avatar(self, user):
         return mark_safe("<img src='/static/user/{avatar_url}' alt='{alt}' />".format(avatar_url=user.avatar_url.name, alt=user.first_name))
@@ -81,11 +82,11 @@ class Post_categoryAmin(admin.ModelAdmin):
     list_display_links = ["name"]
 
 class SliderAmin(admin.ModelAdmin):
-    list_display = ["id", "title", "banner_url", "discription", "status"]
+    list_display = ["id", "title", "image", "discription", "status"]
     list_display_links = ["title"]
 
 class FalcutyAmin(admin.ModelAdmin):
-    list_display = ["id", "falcuty_name", "falcuty_gpa", "discription", "website_url"]
+    list_display = ["id", "falcuty_name", "falcuty_gpa", "discription"]
     list_display_links = ["falcuty_name"]
 
 class MajorAmin(admin.ModelAdmin):

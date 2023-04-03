@@ -143,7 +143,7 @@ DATABASES = {
 
 AUTH_USER_MODEL = 'courses.User'
 
-MEDIA_ROOT = '%s/courses/' % BASE_DIR
+MEDIA_ROOT = '%s/courses/static/' % BASE_DIR
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
